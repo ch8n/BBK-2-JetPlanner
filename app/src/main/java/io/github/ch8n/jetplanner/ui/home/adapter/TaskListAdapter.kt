@@ -8,34 +8,16 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import io.github.ch8n.jetplanner.R
+import io.github.ch8n.jetplanner.data.model.Task
 import io.github.ch8n.jetplanner.data.model.TaskStatus
 import io.github.ch8n.jetplanner.databinding.ListItemTaskBinding
 import java.util.*
 
 
-data class TaskItem(
-    val id: String,
-    val name: String,
-    val status: TaskStatus,
-    val startTime: Long,
-    val endTime: Long
-) {
-    companion object {
-        val fake
-            get() = TaskItem(
-                id = UUID.randomUUID().toString(),
-                name = "Title - ${UUID.randomUUID()}",
-                status = TaskStatus.PENDING,
-                startTime = System.currentTimeMillis(),
-                endTime = System.currentTimeMillis()
-            )
-    }
-}
-
 class TaskListAdapter private constructor(
-    diffUtil: DiffUtil.ItemCallback<TaskItem>,
-    private val onItemClicked: (position: Int, item: TaskItem) -> Unit
-) : ListAdapter<TaskItem, TaskItemVH>(diffUtil) {
+    diffUtil: DiffUtil.ItemCallback<Task>,
+    private val onItemClicked: (position: Int, item: Task) -> Unit
+) : ListAdapter<Task, TaskItemVH>(diffUtil) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskItemVH {
         val binding = ListItemTaskBinding.inflate(
@@ -52,18 +34,18 @@ class TaskListAdapter private constructor(
 
     companion object {
 
-        private val diffUtil: DiffUtil.ItemCallback<TaskItem> =
-            object : DiffUtil.ItemCallback<TaskItem>() {
-                override fun areItemsTheSame(oldItem: TaskItem, newItem: TaskItem): Boolean {
+        private val diffUtil: DiffUtil.ItemCallback<Task> =
+            object : DiffUtil.ItemCallback<Task>() {
+                override fun areItemsTheSame(oldItem: Task, newItem: Task): Boolean {
                     return oldItem.id == newItem.id
                 }
 
-                override fun areContentsTheSame(oldItem: TaskItem, newItem: TaskItem): Boolean {
+                override fun areContentsTheSame(oldItem: Task, newItem: Task): Boolean {
                     return oldItem == newItem
                 }
             }
 
-        fun newInstance(onItemClicked: (position: Int, item: TaskItem) -> Unit): TaskListAdapter {
+        fun newInstance(onItemClicked: (position: Int, item: Task) -> Unit): TaskListAdapter {
             return TaskListAdapter(diffUtil, onItemClicked)
         }
     }
@@ -72,7 +54,7 @@ class TaskListAdapter private constructor(
 
 class TaskItemVH(
     binding: ListItemTaskBinding,
-    private val onItemClicked: (position: Int, item: TaskItem) -> Unit
+    private val onItemClicked: (position: Int, item: Task) -> Unit
 ) : RecyclerView.ViewHolder(binding.root) {
 
     private val taskTextView = binding.labelTask
@@ -81,7 +63,7 @@ class TaskItemVH(
     private val rootCard = binding.root
     private val context = binding.root.context
 
-    fun onBind(taskItem: TaskItem) {
+    fun onBind(taskItem: Task) {
         taskTextView.text = taskItem.name
         timeTextView.text = taskItem.startTime.toString()
 
