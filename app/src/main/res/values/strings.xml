@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">JetPlanner</string>
+    <string name="todays_plan">Today\'s Plan!</string>
+    <string name="preview">Preview</string>
+    <string name="current_task">Current Task</string>
+    <string name="create_task">Create Task</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="done">Done</string>
+    <string name="save">Save</string>
+    <string name="from">FROM</string>
+    <string name="to">TO</string>
 </resources>

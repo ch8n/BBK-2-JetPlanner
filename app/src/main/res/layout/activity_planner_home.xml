@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/yellow_light"
+    tools:context=".ui.home.PlannerHomeActivity">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="@id/label_plan"
+        app:layout_constraintEnd_toEndOf="@id/label_plan"
+        app:layout_constraintEnd_toStartOf="@id/label_plan"
+        app:layout_constraintTop_toTopOf="@id/label_plan"
+        app:srcCompat="@drawable/checklist" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/label_plan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/todays_plan"
+        android:textColor="@color/black"
+        android:textSize="36sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/blob"
+        android:layout_width="0dp"
+        android:layout_height="429dp"
+        android:layout_marginTop="80dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/blob" />
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/label_day"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="45dp"
+        android:layout_marginTop="36dp"
+        android:text="Friday,"
+        android:textColor="@color/black"
+        android:textSize="32sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/blob" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/label_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="45dp"
+        android:text="Feb 25, 2022"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@id/label_day"
+        app:layout_constraintStart_toEndOf="@id/label_day" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list_task"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="24dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/label_day"
+        tools:listitem="@layout/list_item_task" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
