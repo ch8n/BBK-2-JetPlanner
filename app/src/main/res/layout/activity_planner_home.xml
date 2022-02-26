@@ -61,6 +61,7 @@
         android:text="Feb 25, 2022"
         android:textColor="@color/black"
         android:textSize="14sp"
+        app:layout_constraintBaseline_toBaselineOf="@id/label_day"
         app:layout_constraintBottom_toBottomOf="@id/label_day"
         app:layout_constraintStart_toEndOf="@id/label_day" />
 
