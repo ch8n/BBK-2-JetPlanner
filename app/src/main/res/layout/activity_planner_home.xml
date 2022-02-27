@@ -90,7 +90,7 @@
 
         <include
             android:id="@+id/included_create_task"
-            layout="@layout/layout_create_task" />
+            layout="@layout/layout_current_task" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

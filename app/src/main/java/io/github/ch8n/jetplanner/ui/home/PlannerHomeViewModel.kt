@@ -22,7 +22,7 @@ class PlannerHomeViewModel : ViewModel() {
     private val dummyList = mutableListOf<Task>().also {
         var currentMoment = Clock.System.now()
         repeat(10) { index ->
-            currentMoment = currentMoment.plus(value = 2, unit = DateTimeUnit.HOUR)
+            currentMoment = currentMoment.plus(value = 2, unit = DateTimeUnit.MINUTE)
             it.add(
                 Task.fake.copy(
                     name = "Title : $index $currentMoment",
@@ -30,6 +30,7 @@ class PlannerHomeViewModel : ViewModel() {
                 )
             )
         }
+        it.sortBy { it.startTime }
     }
 
     fun getTasks() = viewModelScope.launch {
@@ -38,7 +39,7 @@ class PlannerHomeViewModel : ViewModel() {
 
     fun addTask(task: Task) = viewModelScope.launch {
         _tasks.emit(
-            _tasks.value + task
+            (_tasks.value + task).sortedBy { it.startTime }
         )
     }
 
