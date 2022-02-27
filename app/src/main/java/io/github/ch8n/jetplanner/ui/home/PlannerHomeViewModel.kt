@@ -1,30 +1,39 @@
 package io.github.ch8n.jetplanner.ui.home
 
+import android.provider.Settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.ch8n.jetplanner.data.model.Task
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.plus
+import java.time.LocalDate
+import java.time.LocalTime
+import java.util.*
 
 class PlannerHomeViewModel : ViewModel() {
 
     private val _tasks = MutableStateFlow(emptyList<Task>())
     val tasks = _tasks.asStateFlow()
 
-    fun getTasks() = viewModelScope.launch {
-        _tasks.emit(
-            listOf(
-                Task.fake,
-                Task.fake,
-                Task.fake,
-                Task.fake,
-                Task.fake,
-                Task.fake,
-                Task.fake,
-                Task.fake,
+    private val dummyList = mutableListOf<Task>().also {
+        var currentMoment = Clock.System.now()
+        repeat(10) { index ->
+            currentMoment = currentMoment.plus(value = 2, unit = DateTimeUnit.HOUR)
+            it.add(
+                Task.fake.copy(
+                    name = "Title : $index $currentMoment",
+                    startTime = currentMoment.toEpochMilliseconds()
+                )
             )
-        )
+        }
+    }
+
+    fun getTasks() = viewModelScope.launch {
+        _tasks.emit(dummyList)
     }
 
     fun addTask(task: Task) = viewModelScope.launch {
@@ -48,6 +57,9 @@ class PlannerHomeViewModel : ViewModel() {
             }
         }
     }
+
+    fun getCurrentTask(): Task? =
+        _tasks.value.firstOrNull { it.startTime >= System.currentTimeMillis() }
 
 }
 

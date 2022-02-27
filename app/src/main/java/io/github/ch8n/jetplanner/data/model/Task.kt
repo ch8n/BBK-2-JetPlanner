@@ -20,7 +20,7 @@ data class Task(
         val fake
             get() = Task(
                 id = UUID.randomUUID().toString(),
-                name = "Title - ${UUID.randomUUID()}",
+                name = "Title -",
                 status = TaskStatus.PENDING,
                 startTime = System.currentTimeMillis(),
                 endTime = System.currentTimeMillis()
