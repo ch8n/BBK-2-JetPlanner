@@ -14,6 +14,7 @@ import io.github.ch8n.jetplanner.data.model.TaskStatus
 import io.github.ch8n.jetplanner.databinding.ActivityPlannerHomeBinding
 import io.github.ch8n.jetplanner.ui.home.adapter.TaskListAdapter
 import io.github.ch8n.jetplanner.ui.home.dialog.CreateTaskBottomSheet
+import io.github.ch8n.jetplanner.ui.home.dialog.ModifyTaskBottomSheet
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -74,6 +75,16 @@ class PlannerHomeActivity : AppCompatActivity() {
     }
 
     private fun initTaskList(): Unit = with(binding) {
+        val modifyTaskBottomSheet = ModifyTaskBottomSheet()
+
+        modifyTaskBottomSheet.onTaskUpdated = {
+            viewModel.updateTask(it)
+        }
+
+        modifyTaskBottomSheet.onTaskDeleted = {
+            viewModel.deleteTask(it)
+        }
+
         val onRecyclerItemClicked: (position: Int, item: Task) -> Unit =
             { position: Int, item: Task ->
                 val updated = when (item.status) {
@@ -84,7 +95,16 @@ class PlannerHomeActivity : AppCompatActivity() {
                 viewModel.updateTask(updated)
             }
 
-        TaskListAdapter.newInstance(onItemClicked = onRecyclerItemClicked)
+        val onRecyclerItemLongClick: (position: Int, item: Task) -> Unit =
+            { position: Int, item: Task ->
+                modifyTaskBottomSheet.show(supportFragmentManager, ModifyTaskBottomSheet.TAG)
+                modifyTaskBottomSheet.taskData.tryEmit(item)
+            }
+
+        TaskListAdapter.newInstance(
+            onItemClicked = onRecyclerItemClicked,
+            onItemLongClick = onRecyclerItemLongClick
+        )
             .also { listAdapter = it }
             .also { listTask.adapter = it }
             .also { LinearSnapHelper().attachToRecyclerView(listTask) }

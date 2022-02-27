@@ -1,6 +1,5 @@
 package io.github.ch8n.jetplanner.ui.home.adapter
 
-import android.os.SystemClock
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -11,12 +10,12 @@ import io.github.ch8n.jetplanner.R
 import io.github.ch8n.jetplanner.data.model.Task
 import io.github.ch8n.jetplanner.data.model.TaskStatus
 import io.github.ch8n.jetplanner.databinding.ListItemTaskBinding
-import java.util.*
 
 
 class TaskListAdapter private constructor(
     diffUtil: DiffUtil.ItemCallback<Task>,
-    private val onItemClicked: (position: Int, item: Task) -> Unit
+    private val onItemClicked: (position: Int, item: Task) -> Unit,
+    private val onItemLongClick: (position: Int, item: Task) -> Unit
 ) : ListAdapter<Task, TaskItemVH>(diffUtil) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskItemVH {
@@ -25,7 +24,7 @@ class TaskListAdapter private constructor(
             parent,
             false
         )
-        return TaskItemVH(binding, onItemClicked)
+        return TaskItemVH(binding, onItemClicked, onItemLongClick)
     }
 
     override fun onBindViewHolder(holder: TaskItemVH, position: Int) {
@@ -45,8 +44,11 @@ class TaskListAdapter private constructor(
                 }
             }
 
-        fun newInstance(onItemClicked: (position: Int, item: Task) -> Unit): TaskListAdapter {
-            return TaskListAdapter(diffUtil, onItemClicked)
+        fun newInstance(
+            onItemClicked: (position: Int, item: Task) -> Unit,
+            onItemLongClick: (position: Int, item: Task) -> Unit
+        ): TaskListAdapter {
+            return TaskListAdapter(diffUtil, onItemClicked, onItemLongClick)
         }
     }
 
@@ -54,7 +56,8 @@ class TaskListAdapter private constructor(
 
 class TaskItemVH(
     binding: ListItemTaskBinding,
-    private val onItemClicked: (position: Int, item: Task) -> Unit
+    private val onItemClicked: (position: Int, item: Task) -> Unit,
+    private val onItemLongClick: (position: Int, item: Task) -> Unit
 ) : RecyclerView.ViewHolder(binding.root) {
 
     private val taskTextView = binding.labelTask
@@ -85,6 +88,11 @@ class TaskItemVH(
 
         rootCard.setOnClickListener {
             onItemClicked.invoke(adapterPosition, taskItem)
+        }
+
+        rootCard.setOnLongClickListener {
+            onItemLongClick.invoke(adapterPosition, taskItem)
+            true
         }
     }
 }

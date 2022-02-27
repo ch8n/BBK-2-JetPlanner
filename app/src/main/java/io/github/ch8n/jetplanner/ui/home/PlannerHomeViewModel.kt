@@ -1,18 +1,15 @@
 package io.github.ch8n.jetplanner.ui.home
 
-import android.provider.Settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.ch8n.jetplanner.data.model.Task
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.plus
-import java.time.LocalDate
-import java.time.LocalTime
-import java.util.*
 
 class PlannerHomeViewModel : ViewModel() {
 
@@ -53,14 +50,20 @@ class PlannerHomeViewModel : ViewModel() {
                 } else {
                     it
                 }
-            }.let {
-                _tasks.emit(it)
             }
+                .sortedBy { it.startTime }
+                .let { _tasks.emit(it) }
         }
     }
 
     fun getCurrentTask(): Task? =
         _tasks.value.firstOrNull { it.startTime >= System.currentTimeMillis() }
 
+    fun deleteTask(task: Task) {
+        viewModelScope.launch {
+            val remainingTask = _tasks.value.filter { it.id != task.id }
+            _tasks.emit(remainingTask)
+        }
+    }
 }
 
