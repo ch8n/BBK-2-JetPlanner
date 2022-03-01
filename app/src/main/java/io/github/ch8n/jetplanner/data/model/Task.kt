@@ -1,5 +1,8 @@
 package io.github.ch8n.jetplanner.data.model
 
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.PrimaryKey
 import kotlinx.datetime.*
 import kotlinx.datetime.TimeZone
 import java.time.format.DateTimeFormatter
@@ -23,8 +26,9 @@ fun Long.toTime(formatting: String = "hh:mm a"): String {
 }
 
 
+@Entity
 data class Task(
-    val id: String,
+    @PrimaryKey val id: String,
     val name: String,
     val status: TaskStatus,
     val startTime: Long,

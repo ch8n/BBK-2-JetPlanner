@@ -10,10 +10,13 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.github.ch8n.jetplanner.data.model.Task
 import io.github.ch8n.jetplanner.data.model.TaskStatus
+import io.github.ch8n.jetplanner.data.repository.AppDatabase
+import io.github.ch8n.jetplanner.data.repository.TaskRepository
 import io.github.ch8n.jetplanner.databinding.ActivityPlannerHomeBinding
 import io.github.ch8n.jetplanner.ui.home.adapter.TaskListAdapter
 import io.github.ch8n.jetplanner.ui.home.dialog.TaskBottomSheet
 import io.github.ch8n.jetplanner.ui.home.dialog.TaskBottomSheetType
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.datetime.Clock
@@ -32,7 +35,11 @@ class PlannerHomeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPlannerHomeBinding
     private lateinit var listAdapter: TaskListAdapter
-    private val viewModel by lazy { PlannerHomeViewModel() }
+
+    private val db by lazy { AppDatabase.instance(applicationContext) }
+    private val dao by lazy { db.taskDao() }
+    private val repo by lazy { TaskRepository(dao) }
+    private val viewModel by lazy { PlannerHomeViewModel(repo) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,21 +66,15 @@ class PlannerHomeActivity : AppCompatActivity() {
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
 
     private fun initCurrentTaskBottomSheet(taskBottomSheet: TaskBottomSheet): Unit = with(binding) {
-
         bottomSheetBehavior = BottomSheetBehavior.from(includedCreateTask.bottomSheet)
-
         bottomSheetBehavior.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {}
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
-                    BottomSheetBehavior.STATE_HIDDEN -> bottomSheetBehavior.state =
-                        BottomSheetBehavior.STATE_COLLAPSED
-                    BottomSheetBehavior.STATE_EXPANDED, BottomSheetBehavior.STATE_HALF_EXPANDED -> {
-                        val currentTask = viewModel.getCurrentTask()
-                        includedCreateTask.btmLabelTaskTitle.text =
-                            currentTask?.name ?: "Nothing right now...."
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
                     }
                 }
             }
@@ -92,6 +93,16 @@ class PlannerHomeActivity : AppCompatActivity() {
             }
         }
 
+        lifecycleScope.launchWhenResumed {
+            viewModel.currentTask.collect {
+                val task = it ?: return@collect
+                includedCreateTask.btmLabelTaskTitle.setText(task.name)
+                includedCreateTask.btmBtnDone.setOnClickListener {
+                    viewModel.addTask(task.copy(status = TaskStatus.DONE))
+                }
+            }
+        }
+
     }
 
     private fun initTaskList(taskBottomSheet: TaskBottomSheet): Unit = with(binding) {
@@ -103,7 +114,7 @@ class PlannerHomeActivity : AppCompatActivity() {
                     TaskStatus.DONE -> item.copy(status = TaskStatus.FAILED)
                     TaskStatus.FAILED -> item.copy(status = TaskStatus.DONE)
                 }
-                viewModel.updateTask(updated)
+                viewModel.addTask(updated)
             }
 
         val onRecyclerItemLongClick: (position: Int, item: Task) -> Unit =
@@ -113,7 +124,7 @@ class PlannerHomeActivity : AppCompatActivity() {
                         TaskBottomSheetType.ModifyBottomSheet(
                             task = item,
                             onUpdated = {
-                                viewModel.updateTask(it)
+                                viewModel.addTask(it)
                             },
                             onDeleted = {
                                 viewModel.deleteTask(it)
@@ -135,7 +146,7 @@ class PlannerHomeActivity : AppCompatActivity() {
                     .onEach { adapter.submitList(it) }
                     .launchIn(lifecycleScope)
             }
-            .also { viewModel.getTasks() }
+            .also { viewModel.observeTask() }
 
     }
 
