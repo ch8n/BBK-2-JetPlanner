@@ -14,9 +14,9 @@ enum class TaskStatus {
 }
 
 
-fun Long.toTime(formatting: String = "HH:mm a"): String {
+fun Long.toTime(formatting: String = "hh:mm a"): String {
     val timeInstant = Instant.fromEpochMilliseconds(this)
-    val dateTime = timeInstant.toLocalDateTime(TimeZone.UTC)
+    val dateTime = timeInstant.toLocalDateTime(TimeZone.currentSystemDefault())
     val timeFormat = DateTimeFormatter.ofPattern(formatting)
     // Formatter doesn't exist use Java native formatter
     return dateTime.toJavaLocalDateTime().format(timeFormat)

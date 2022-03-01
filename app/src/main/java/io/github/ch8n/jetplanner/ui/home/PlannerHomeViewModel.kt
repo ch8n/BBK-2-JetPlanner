@@ -3,6 +3,7 @@ package io.github.ch8n.jetplanner.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.ch8n.jetplanner.data.model.Task
+import io.github.ch8n.jetplanner.data.model.TaskStatus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -17,7 +18,7 @@ class PlannerHomeViewModel : ViewModel() {
 
     private val dummyList = mutableListOf<Task>().also {
         var currentMoment = Clock.System.now()
-        repeat(2) { index ->
+        repeat(12) { index ->
             currentMoment = currentMoment.plus(value = 2, unit = DateTimeUnit.MINUTE)
             it.add(
                 Task.fake.copy(
@@ -56,7 +57,9 @@ class PlannerHomeViewModel : ViewModel() {
     }
 
     fun getCurrentTask(): Task? =
-        _tasks.value.firstOrNull { it.startTime >= System.currentTimeMillis() }
+        _tasks.value.firstOrNull {
+            it.startTime >= System.currentTimeMillis() && it.status == TaskStatus.PENDING
+        }
 
     fun deleteTask(task: Task) {
         viewModelScope.launch {

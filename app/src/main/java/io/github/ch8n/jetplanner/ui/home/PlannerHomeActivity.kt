@@ -7,7 +7,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearSnapHelper
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.github.ch8n.jetplanner.data.model.Task
 import io.github.ch8n.jetplanner.data.model.TaskStatus
@@ -20,7 +19,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import java.util.*
 
 fun Context.toast(message: String) {
     Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
@@ -52,7 +50,7 @@ class PlannerHomeActivity : AppCompatActivity() {
     private fun initDate() = with(binding) {
         val currentMoment = Clock.System.now()
         val dateTimeInUTC = currentMoment.toLocalDateTime(TimeZone.UTC)
-        labelDay.text = dateTimeInUTC.dayOfWeek.name.capitalFirst() + ","
+        labelDay.text = "${dateTimeInUTC.dayOfWeek.name.capitalFirst()},"
         labelDate.text = dateTimeInUTC.date
             .let { "${it.dayOfMonth} ${it.month.name.capitalFirst()} ${it.year}" }
     }
@@ -85,7 +83,9 @@ class PlannerHomeActivity : AppCompatActivity() {
         })
 
         includedCreateTask.btmImgBtnCreateTask.setOnClickListener {
-            createTaskBottomSheet.show(supportFragmentManager, CreateTaskBottomSheet.TAG)
+            if (!createTaskBottomSheet.isVisible) {
+                createTaskBottomSheet.show(supportFragmentManager, CreateTaskBottomSheet.TAG)
+            }
         }
 
     }
@@ -113,8 +113,10 @@ class PlannerHomeActivity : AppCompatActivity() {
 
         val onRecyclerItemLongClick: (position: Int, item: Task) -> Unit =
             { position: Int, item: Task ->
-                modifyTaskBottomSheet.show(supportFragmentManager, ModifyTaskBottomSheet.TAG)
-                modifyTaskBottomSheet.taskData.tryEmit(item)
+                if (!modifyTaskBottomSheet.isVisible) {
+                    modifyTaskBottomSheet.show(supportFragmentManager, ModifyTaskBottomSheet.TAG)
+                    modifyTaskBottomSheet.taskData.tryEmit(item)
+                }
             }
 
         TaskListAdapter.newInstance(
@@ -123,7 +125,6 @@ class PlannerHomeActivity : AppCompatActivity() {
         )
             .also { listAdapter = it }
             .also { listTask.adapter = it }
-            .also { LinearSnapHelper().attachToRecyclerView(listTask) }
             .also { adapter ->
                 viewModel.tasks
                     .onEach { adapter.submitList(it) }
