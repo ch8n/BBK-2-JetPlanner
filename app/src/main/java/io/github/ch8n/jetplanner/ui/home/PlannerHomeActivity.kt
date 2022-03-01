@@ -12,8 +12,8 @@ import io.github.ch8n.jetplanner.data.model.Task
 import io.github.ch8n.jetplanner.data.model.TaskStatus
 import io.github.ch8n.jetplanner.databinding.ActivityPlannerHomeBinding
 import io.github.ch8n.jetplanner.ui.home.adapter.TaskListAdapter
-import io.github.ch8n.jetplanner.ui.home.dialog.CreateTaskBottomSheet
-import io.github.ch8n.jetplanner.ui.home.dialog.ModifyTaskBottomSheet
+import io.github.ch8n.jetplanner.ui.home.dialog.TaskBottomSheet
+import io.github.ch8n.jetplanner.ui.home.dialog.TaskBottomSheetType
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.datetime.Clock
@@ -43,8 +43,9 @@ class PlannerHomeActivity : AppCompatActivity() {
 
     private fun setup() {
         initDate()
-        initTaskList()
-        initCurrentTaskBottomSheet()
+        val taskBottomSheet = TaskBottomSheet()
+        initTaskList(taskBottomSheet)
+        initCurrentTaskBottomSheet(taskBottomSheet)
     }
 
     private fun initDate() = with(binding) {
@@ -57,12 +58,8 @@ class PlannerHomeActivity : AppCompatActivity() {
 
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
 
-    private fun initCurrentTaskBottomSheet(): Unit = with(binding) {
-        val createTaskBottomSheet = CreateTaskBottomSheet()
+    private fun initCurrentTaskBottomSheet(taskBottomSheet: TaskBottomSheet): Unit = with(binding) {
 
-        createTaskBottomSheet.onTaskCreated = { newTask ->
-            viewModel.addTask(newTask)
-        }
         bottomSheetBehavior = BottomSheetBehavior.from(includedCreateTask.bottomSheet)
 
         bottomSheetBehavior.addBottomSheetCallback(object :
@@ -83,23 +80,21 @@ class PlannerHomeActivity : AppCompatActivity() {
         })
 
         includedCreateTask.btmImgBtnCreateTask.setOnClickListener {
-            if (!createTaskBottomSheet.isVisible) {
-                createTaskBottomSheet.show(supportFragmentManager, CreateTaskBottomSheet.TAG)
+            if (!taskBottomSheet.isVisible) {
+                taskBottomSheet.setBottomSheetType(
+                    TaskBottomSheetType.CreateBottomSheet(
+                        onCreated = {
+                            viewModel.addTask(it)
+                        }
+                    )
+                )
+                taskBottomSheet.show(supportFragmentManager, TaskBottomSheet.TAG)
             }
         }
 
     }
 
-    private fun initTaskList(): Unit = with(binding) {
-        val modifyTaskBottomSheet = ModifyTaskBottomSheet()
-
-        modifyTaskBottomSheet.onTaskUpdated = {
-            viewModel.updateTask(it)
-        }
-
-        modifyTaskBottomSheet.onTaskDeleted = {
-            viewModel.deleteTask(it)
-        }
+    private fun initTaskList(taskBottomSheet: TaskBottomSheet): Unit = with(binding) {
 
         val onRecyclerItemClicked: (position: Int, item: Task) -> Unit =
             { position: Int, item: Task ->
@@ -113,9 +108,19 @@ class PlannerHomeActivity : AppCompatActivity() {
 
         val onRecyclerItemLongClick: (position: Int, item: Task) -> Unit =
             { position: Int, item: Task ->
-                if (!modifyTaskBottomSheet.isVisible) {
-                    modifyTaskBottomSheet.show(supportFragmentManager, ModifyTaskBottomSheet.TAG)
-                    modifyTaskBottomSheet.taskData.tryEmit(item)
+                if (!taskBottomSheet.isVisible) {
+                    taskBottomSheet.setBottomSheetType(
+                        TaskBottomSheetType.ModifyBottomSheet(
+                            task = item,
+                            onUpdated = {
+                                viewModel.updateTask(it)
+                            },
+                            onDeleted = {
+                                viewModel.deleteTask(it)
+                            }
+                        )
+                    )
+                    taskBottomSheet.show(supportFragmentManager, TaskBottomSheet.TAG)
                 }
             }
 

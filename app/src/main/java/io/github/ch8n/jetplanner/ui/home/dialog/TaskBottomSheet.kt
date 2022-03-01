@@ -11,8 +11,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import io.github.ch8n.jetplanner.R
 import io.github.ch8n.jetplanner.data.model.Task
 import io.github.ch8n.jetplanner.data.model.TaskStatus
 import io.github.ch8n.jetplanner.data.model.toTime
@@ -21,10 +21,27 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import java.util.*
 
 
-class CreateTaskBottomSheet : BottomSheetDialogFragment() {
+sealed class TaskBottomSheetType {
+    data class CreateBottomSheet(
+        val onCreated: (task: Task) -> Unit,
+    ) : TaskBottomSheetType()
+
+    data class ModifyBottomSheet(
+        val task: Task,
+        val onUpdated: (task: Task) -> Unit,
+        val onDeleted: (task: Task) -> Unit,
+    ) : TaskBottomSheetType()
+}
+
+
+class TaskBottomSheet : BottomSheetDialogFragment() {
 
     private lateinit var binding: BottomSheetCreateTaskBinding
-    var onTaskCreated: (Task) -> Unit = {}
+    private lateinit var bottomSheetType: TaskBottomSheetType
+
+    fun setBottomSheetType(taskBottomSheet: TaskBottomSheetType) {
+        bottomSheetType = taskBottomSheet
+    }
 
     private val taskData = MutableStateFlow<Task>(
         Task(
@@ -54,28 +71,48 @@ class CreateTaskBottomSheet : BottomSheetDialogFragment() {
 
     private fun setup() = with(binding) {
         bottomSheetTransparentBackground(root)
+        initDefaultTask()
+        autoPopulateUI()
+        attachTaskNameUpdateListener()
         attachTimePicker()
+        attachSaveOrUpdateBehaviour()
+        attachDeleteOrCloseBehaviour()
+    }
 
-        editTaskName.editText?.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                val taskName = s?.toString() ?: ""
-                taskData.tryEmit(taskData.value.copy(name = taskName))
+    private fun attachDeleteOrCloseBehaviour() = with(binding) {
+        val taskBottomSheet = bottomSheetType
+        when (taskBottomSheet) {
+            is TaskBottomSheetType.CreateBottomSheet -> btmImgBtnClose.setImageResource(R.drawable.close)
+            is TaskBottomSheetType.ModifyBottomSheet -> btmImgBtnClose.setImageResource(R.drawable.delete)
+        }
+        btmImgBtnClose.setOnClickListener {
+            when (taskBottomSheet) {
+                is TaskBottomSheetType.CreateBottomSheet -> {}
+                is TaskBottomSheetType.ModifyBottomSheet -> taskBottomSheet.onDeleted.invoke(
+                    taskData.value
+                )
             }
+            dismiss()
+        }
+    }
 
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        })
-
+    private fun attachSaveOrUpdateBehaviour() = with(binding) {
         btmBtnSave.setOnClickListener {
             val task = taskData.value
             val isTaskNameValid = task.name.trim().isNotBlank()
             val isStartTimeValid = task.startTime != 0L
             val isEndTimeValid = task.endTime != 0L
             val isValidTask = isTaskNameValid && isStartTimeValid && isEndTimeValid
-
             if (isValidTask) {
                 editTaskName.error = null
-                onTaskCreated.invoke(task)
+                when (val taskBottomSheet = bottomSheetType) {
+                    is TaskBottomSheetType.CreateBottomSheet -> taskBottomSheet.onCreated.invoke(
+                        task
+                    )
+                    is TaskBottomSheetType.ModifyBottomSheet -> taskBottomSheet.onUpdated.invoke(
+                        task
+                    )
+                }
                 dismiss()
             } else {
                 editTaskName.error = when {
@@ -86,9 +123,43 @@ class CreateTaskBottomSheet : BottomSheetDialogFragment() {
                 }
             }
         }
+    }
 
-        btmImgBtnClose.setOnClickListener {
-            dismiss()
+    private fun attachTaskNameUpdateListener() {
+        binding.editTaskName.editText?.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                val taskName = s?.toString() ?: ""
+                taskData.tryEmit(taskData.value.copy(name = taskName))
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+    }
+
+    private fun autoPopulateUI() = with(binding) {
+        when (val taskBottomSheet = bottomSheetType) {
+            is TaskBottomSheetType.CreateBottomSheet -> {}
+            is TaskBottomSheetType.ModifyBottomSheet -> with(taskBottomSheet.task) {
+                editTaskName.editText?.setText(name)
+                textTaskFrom.setText(displayStartTime)
+                textTaskTo.setText(displayEndTime)
+            }
+        }
+    }
+
+    private fun initDefaultTask() = with(binding) {
+        when (val taskBottomSheet = bottomSheetType) {
+            is TaskBottomSheetType.CreateBottomSheet -> taskData.tryEmit(
+                Task(
+                    id = UUID.randomUUID().toString(),
+                    name = "",
+                    startTime = 0L,
+                    endTime = 0L,
+                    status = TaskStatus.PENDING
+                )
+            )
+            is TaskBottomSheetType.ModifyBottomSheet -> taskData.tryEmit(taskBottomSheet.task)
         }
     }
 
