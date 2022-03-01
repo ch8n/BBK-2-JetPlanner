@@ -17,9 +17,17 @@ import io.github.ch8n.jetplanner.ui.home.dialog.CreateTaskBottomSheet
 import io.github.ch8n.jetplanner.ui.home.dialog.ModifyTaskBottomSheet
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import java.util.*
 
 fun Context.toast(message: String) {
     Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+}
+
+fun String.capitalFirst(): String {
+    return this.lowercase().replaceFirstChar { it.uppercase() }
 }
 
 class PlannerHomeActivity : AppCompatActivity() {
@@ -35,10 +43,18 @@ class PlannerHomeActivity : AppCompatActivity() {
         setup()
     }
 
-    private fun setup(): Unit = with(binding) {
+    private fun setup() {
+        initDate()
         initTaskList()
         initCurrentTaskBottomSheet()
+    }
 
+    private fun initDate() = with(binding) {
+        val currentMoment = Clock.System.now()
+        val dateTimeInUTC = currentMoment.toLocalDateTime(TimeZone.UTC)
+        labelDay.text = dateTimeInUTC.dayOfWeek.name.capitalFirst() + ","
+        labelDate.text = dateTimeInUTC.date
+            .let { "${it.dayOfMonth} ${it.month.name.capitalFirst()} ${it.year}" }
     }
 
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>

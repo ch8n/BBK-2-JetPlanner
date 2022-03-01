@@ -7,7 +7,7 @@
     <string name="dismiss">Dismiss</string>
     <string name="done">Done</string>
     <string name="save">Save</string>
-    <string name="from">FROM</string>
-    <string name="to">TO</string>
+    <string name="from"><u>FROM</u></string>
+    <string name="to"><u>TO</u></string>
     <string name="task">Task</string>
 </resources>

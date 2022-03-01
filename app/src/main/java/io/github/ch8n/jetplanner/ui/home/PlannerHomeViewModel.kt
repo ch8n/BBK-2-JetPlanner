@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import io.github.ch8n.jetplanner.data.model.Task
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
@@ -18,7 +17,7 @@ class PlannerHomeViewModel : ViewModel() {
 
     private val dummyList = mutableListOf<Task>().also {
         var currentMoment = Clock.System.now()
-        repeat(10) { index ->
+        repeat(2) { index ->
             currentMoment = currentMoment.plus(value = 2, unit = DateTimeUnit.MINUTE)
             it.add(
                 Task.fake.copy(
