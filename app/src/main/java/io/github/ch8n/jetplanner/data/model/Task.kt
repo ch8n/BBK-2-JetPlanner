@@ -31,8 +31,11 @@ data class Task(
     val endTime: Long,
 ) {
 
-    val displayTime: String
+    val displayStartTime: String
         get() = startTime.toTime()
+
+    val displayEndTime: String
+        get() = endTime.toTime()
 
     companion object {
         val fake

@@ -43,8 +43,8 @@ class CreateTaskBottomSheet : BottomSheetDialogFragment() {
 
         binding.btmBtnSave.setOnClickListener {
             val taskName = binding.editTaskName.editText?.text?.toString() ?: ""
-            val taskFrom = binding.editTaskFrom.text?.toString() ?: ""
-            val taskTo = binding.editTaskTo.text?.toString() ?: ""
+            val taskFrom = binding.textTaskFrom.text?.toString() ?: ""
+            val taskTo = binding.textTaskFrom.text?.toString() ?: ""
             onTaskCreated.invoke(
                 Task(
                     id = UUID.randomUUID().toString(),
@@ -63,7 +63,7 @@ class CreateTaskBottomSheet : BottomSheetDialogFragment() {
 
         val timePickerDialog = TimePickerDialog(
             context, { view, hourOfDay, minute ->
-                binding.editTaskFrom.setText("$hourOfDay:$minute")
+                binding.textTaskFrom.setText("$hourOfDay:$minute")
             },
             hour,
             minute,
@@ -74,7 +74,7 @@ class CreateTaskBottomSheet : BottomSheetDialogFragment() {
             dismiss()
         }
 
-        binding.editTaskFrom.setOnClickListener {
+        binding.textTaskFrom.setOnClickListener {
             timePickerDialog.show()
         }
 

@@ -68,7 +68,7 @@ class TaskItemVH(
 
     fun onBind(taskItem: Task) {
         taskTextView.text = taskItem.name
-        timeTextView.text = taskItem.displayTime
+        timeTextView.text = taskItem.displayStartTime
 
         statusImage.setImageResource(
             when (taskItem.status) {

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bottomSheet"
     android:layout_width="match_parent"
     android:layout_height="240dp"
@@ -55,28 +56,46 @@
 
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/edit_task_from"
+        android:id="@+id/text_task_from"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="100dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
         android:hint="@string/from"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toStartOf="@+id/seperator"
+        app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/edit_task_name" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/seperator"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="16dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="@string/separator_dash"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/text_task_to"
+        app:layout_constraintStart_toEndOf="@+id/text_task_from"
         app:layout_constraintTop_toBottomOf="@id/edit_task_name" />
 
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/edit_task_to"
+        android:id="@+id/text_task_to"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="100dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
         android:hint="@string/to"
-        app:layout_constraintStart_toEndOf="@id/edit_task_from"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toEndOf="@+id/seperator"
         app:layout_constraintTop_toBottomOf="@id/edit_task_name" />
 
 
