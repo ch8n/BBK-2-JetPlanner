@@ -47,7 +47,6 @@ class PlannerHomeViewModel(
         }
     }
 
-
     fun deleteTask(task: Task) = viewModelScope.launch {
         taskRepository.removeTask(task)
     }

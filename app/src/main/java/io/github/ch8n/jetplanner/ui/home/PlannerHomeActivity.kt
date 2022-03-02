@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import io.github.ch8n.jetplanner.R
 import io.github.ch8n.jetplanner.data.model.Task
 import io.github.ch8n.jetplanner.data.model.TaskStatus
 import io.github.ch8n.jetplanner.data.repository.AppDatabase
@@ -95,10 +96,14 @@ class PlannerHomeActivity : AppCompatActivity() {
 
         lifecycleScope.launchWhenResumed {
             viewModel.currentTask.collect {
-                val task = it ?: return@collect
-                includedCreateTask.btmLabelTaskTitle.setText(task.name)
+                val task = it
+                includedCreateTask.btmLabelTaskTitle.setText(
+                    task?.name ?: getString(R.string.nothing_for_now)
+                )
                 includedCreateTask.btmBtnDone.setOnClickListener {
-                    viewModel.addTask(task.copy(status = TaskStatus.DONE))
+                    if (task != null) {
+                        viewModel.addTask(task.copy(status = TaskStatus.DONE))
+                    }
                 }
             }
         }

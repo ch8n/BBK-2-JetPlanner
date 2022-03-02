@@ -10,7 +10,7 @@
         <entry key="app/src/main/res/layout/bottom_sheet_create_task.xml" value="0.1" />
         <entry key="app/src/main/res/layout/bottom_sheet_modify_task.xml" value="0.10191725529767912" />
         <entry key="app/src/main/res/layout/layout_create_task.xml" value="0.15670289855072464" />
-        <entry key="app/src/main/res/layout/layout_current_task.xml" value="0.34791666666666665" />
+        <entry key="app/src/main/res/layout/layout_current_task.xml" value="0.1" />
         <entry key="app/src/main/res/layout/list_item_task.xml" value="0.2259963768115942" />
       </map>
     </option>

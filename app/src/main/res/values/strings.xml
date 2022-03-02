@@ -11,4 +11,5 @@
     <string name="to"><u>TO</u></string>
     <string name="task">Task</string>
     <string name="separator_dash">-</string>
+    <string name="nothing_for_now">Nothing for now…</string>
 </resources>
