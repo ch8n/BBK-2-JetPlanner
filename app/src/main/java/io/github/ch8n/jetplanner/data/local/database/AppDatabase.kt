@@ -4,8 +4,9 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import io.github.ch8n.jetplanner.data.local.sources.TaskDao
 import io.github.ch8n.jetplanner.data.model.Task
-import io.github.ch8n.jetplanner.data.repository.TaskDao
+
 
 @Database(entities = [Task::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
