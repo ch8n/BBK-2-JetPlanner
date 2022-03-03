@@ -4,10 +4,12 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import dagger.hilt.android.AndroidEntryPoint
 import io.github.ch8n.jetplanner.R
 import io.github.ch8n.jetplanner.data.local.database.AppDatabase
 import io.github.ch8n.jetplanner.data.model.Task
@@ -23,24 +25,20 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import javax.inject.Inject
 
-fun Context.toast(message: String) {
-    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-}
 
 fun String.capitalFirst(): String {
     return this.lowercase().replaceFirstChar { it.uppercase() }
 }
 
+@AndroidEntryPoint
 class PlannerHomeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPlannerHomeBinding
     private lateinit var listAdapter: TaskListAdapter
 
-    private val db by lazy { AppDatabase.instance(applicationContext) }
-    private val dao by lazy { db.taskDao() }
-    private val repo by lazy { TaskRepository(dao) }
-    private val viewModel by lazy { PlannerHomeViewModel(repo) }
+    private val viewModel: PlannerHomeViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

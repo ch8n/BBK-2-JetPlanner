@@ -5,8 +5,12 @@ import io.github.ch8n.jetplanner.data.model.Task
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class TaskRepository(private val taskDao: TaskDao) {
+
+@Singleton
+class TaskRepository @Inject constructor(private val taskDao: TaskDao) {
 
     suspend fun getTasks(): Flow<List<Task>> = withContext(Dispatchers.IO) {
         taskDao.getAll()

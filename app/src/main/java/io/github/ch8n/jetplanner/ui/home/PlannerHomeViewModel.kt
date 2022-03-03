@@ -2,14 +2,17 @@ package io.github.ch8n.jetplanner.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.ch8n.jetplanner.data.model.Task
 import io.github.ch8n.jetplanner.data.model.TaskStatus
 import io.github.ch8n.jetplanner.data.repository.TaskRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class PlannerHomeViewModel(
+@HiltViewModel
+class PlannerHomeViewModel @Inject constructor(
     private val taskRepository: TaskRepository
 ) : ViewModel() {
 

@@ -49,6 +49,7 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2'
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.0-alpha03"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.5.0-alpha03"
+    implementation "androidx.fragment:fragment-ktx:1.4.1"
 
     def room_version = "2.4.2"
     implementation "androidx.room:room-runtime:$room_version"
