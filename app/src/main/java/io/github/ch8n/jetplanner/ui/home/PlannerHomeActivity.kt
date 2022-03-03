@@ -1,9 +1,7 @@
 package io.github.ch8n.jetplanner.ui.home
 
-import android.content.Context
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -11,10 +9,8 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.ch8n.jetplanner.R
-import io.github.ch8n.jetplanner.data.local.database.AppDatabase
 import io.github.ch8n.jetplanner.data.model.Task
 import io.github.ch8n.jetplanner.data.model.TaskStatus
-import io.github.ch8n.jetplanner.data.repository.TaskRepository
 import io.github.ch8n.jetplanner.databinding.ActivityPlannerHomeBinding
 import io.github.ch8n.jetplanner.ui.home.adapter.TaskListAdapter
 import io.github.ch8n.jetplanner.ui.home.dialog.TaskBottomSheet
@@ -25,7 +21,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import javax.inject.Inject
 
 
 fun String.capitalFirst(): String {
