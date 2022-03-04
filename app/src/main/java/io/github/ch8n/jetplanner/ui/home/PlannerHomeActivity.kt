@@ -27,6 +27,14 @@ fun String.capitalFirst(): String {
     return this.lowercase().replaceFirstChar { it.uppercase() }
 }
 
+fun View.setVisible(isVisible: Boolean) {
+    if (isVisible) {
+        visibility = View.VISIBLE
+    } else {
+        visibility = View.GONE
+    }
+}
+
 @AndroidEntryPoint
 class PlannerHomeActivity : AppCompatActivity() {
 
@@ -57,18 +65,18 @@ class PlannerHomeActivity : AppCompatActivity() {
             .let { "${it.dayOfMonth} ${it.month.name.capitalFirst()} ${it.year}" }
     }
 
-    private lateinit var bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
+    private var bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>? = null
 
     private fun initCurrentTaskBottomSheet(taskBottomSheet: TaskBottomSheet): Unit = with(binding) {
         bottomSheetBehavior = BottomSheetBehavior.from(includedCreateTask.bottomSheet)
-        bottomSheetBehavior.addBottomSheetCallback(object :
+        bottomSheetBehavior?.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {}
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
                     BottomSheetBehavior.STATE_HIDDEN -> {
-                        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                        bottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
                     }
                 }
             }
@@ -141,7 +149,19 @@ class PlannerHomeActivity : AppCompatActivity() {
             .also { listTask.adapter = it }
             .also { adapter ->
                 viewModel.tasks
-                    .onEach { adapter.submitList(it) }
+                    .onEach {
+                        adapter.submitList(it) {
+
+                            imageWork.setVisible(it.isEmpty())
+                            labelWork.setVisible(it.isEmpty())
+
+                            bottomSheetBehavior?.state = if (it.isEmpty()) {
+                                BottomSheetBehavior.STATE_COLLAPSED
+                            } else {
+                                BottomSheetBehavior.STATE_EXPANDED
+                            }
+                        }
+                    }
                     .launchIn(lifecycleScope)
             }
             .also { viewModel.observeTask() }

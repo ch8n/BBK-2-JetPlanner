@@ -22,13 +22,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
+        android:fontFamily="@font/poppins_regular"
         android:text="@string/todays_plan"
         android:textColor="@color/black"
         android:textSize="36sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/blob"
@@ -38,6 +38,29 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/blob" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/image_work"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="100dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/label_day"
+        app:srcCompat="@drawable/working" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/label_work"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/poppins_regular"
+        android:text="@string/let_get_some_work_done"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/image_work" />
 
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -49,6 +72,7 @@
         android:text="Friday,"
         android:textColor="@color/black"
         android:textSize="32sp"
+        android:fontFamily="@font/poppins_regular"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/blob" />
 
@@ -58,6 +82,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
         android:layout_marginTop="45dp"
+        android:fontFamily="@font/poppins_regular"
         android:text="Feb 25, 2022"
         android:textColor="@color/black"
         android:textSize="14sp"

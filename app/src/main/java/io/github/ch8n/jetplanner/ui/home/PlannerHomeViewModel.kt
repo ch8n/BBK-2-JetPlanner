@@ -7,7 +7,9 @@ import io.github.ch8n.jetplanner.data.model.Task
 import io.github.ch8n.jetplanner.data.model.TaskStatus
 import io.github.ch8n.jetplanner.data.repository.TaskRepository
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,7 +26,7 @@ class PlannerHomeViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            checkCurrentTaskChange()
+            checkTaskStatus()
         }
     }
 
@@ -40,14 +42,30 @@ class PlannerHomeViewModel @Inject constructor(
         taskRepository.addUpdateTask(task)
     }
 
-    private suspend fun checkCurrentTaskChange() {
+    private suspend fun checkTaskStatus() {
         while (true) {
-            val currentTask = _tasks.value.firstOrNull {
-                it.startTime <= System.currentTimeMillis() && it.status == TaskStatus.PENDING
-            }
-            _currentTask.emit(currentTask)
-            delay(1000 * 3)
+            setCurrentTask()
+            checkTaskTimePassed()
+            delay(1000)
         }
+    }
+
+    private suspend fun checkTaskTimePassed() {
+        val failedTask = _tasks.value
+            .filter { it.endTime < System.currentTimeMillis() }
+            .filter { it.status == TaskStatus.PENDING }
+            .map { it.copy(status = TaskStatus.FAILED) }
+
+        if (failedTask.isNotEmpty()) {
+            taskRepository.addUpdateTask(*failedTask.toTypedArray())
+        }
+    }
+
+    private suspend fun setCurrentTask() {
+        val currentTask = _tasks.value.firstOrNull {
+            it.startTime <= System.currentTimeMillis() && it.status == TaskStatus.PENDING
+        }
+        _currentTask.emit(currentTask)
     }
 
     fun deleteTask(task: Task) = viewModelScope.launch {

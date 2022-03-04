@@ -16,8 +16,8 @@ class TaskRepository @Inject constructor(private val taskDao: TaskDao) {
         taskDao.getAll()
     }
 
-    suspend fun addUpdateTask(task: Task): Unit = withContext(Dispatchers.IO) {
-        taskDao.insertAll(task)
+    suspend fun addUpdateTask(vararg task: Task): Unit = withContext(Dispatchers.IO) {
+        taskDao.insertAll(*task)
     }
 
     suspend fun removeTask(task: Task): Unit = withContext(Dispatchers.IO) {
