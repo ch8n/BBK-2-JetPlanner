@@ -6,6 +6,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.ch8n.jetplanner.R
@@ -131,9 +133,6 @@ class PlannerHomeActivity : AppCompatActivity() {
                             task = item,
                             onUpdated = {
                                 viewModel.addTask(it)
-                            },
-                            onDeleted = {
-                                viewModel.deleteTask(it)
                             }
                         )
                     )
@@ -163,6 +162,24 @@ class PlannerHomeActivity : AppCompatActivity() {
                         }
                     }
                     .launchIn(lifecycleScope)
+            }
+            .also {
+                ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+                    override fun onMove(
+                        recyclerView: RecyclerView,
+                        viewHolder: RecyclerView.ViewHolder,
+                        target: RecyclerView.ViewHolder
+                    ): Boolean = false
+
+                    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                        val pos = viewHolder.adapterPosition
+                        val item = listAdapter.getItemAt(pos)
+                        if (item != null) {
+                            viewModel.deleteTask(item)
+                        }
+                    }
+                }
+                ).attachToRecyclerView(listTask)
             }
             .also { viewModel.observeTask() }
 

@@ -29,7 +29,6 @@ sealed class TaskBottomSheetType {
     data class ModifyBottomSheet(
         val task: Task,
         val onUpdated: (task: Task) -> Unit,
-        val onDeleted: (task: Task) -> Unit,
     ) : TaskBottomSheetType()
 }
 
@@ -76,22 +75,12 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
         attachTaskNameUpdateListener()
         attachTimePicker()
         attachSaveOrUpdateBehaviour()
-        attachDeleteOrCloseBehaviour()
+        attachCloseBehaviour()
     }
 
-    private fun attachDeleteOrCloseBehaviour() = with(binding) {
-        val taskBottomSheet = bottomSheetType
-        when (taskBottomSheet) {
-            is TaskBottomSheetType.CreateBottomSheet -> btmImgBtnClose.setImageResource(R.drawable.close)
-            is TaskBottomSheetType.ModifyBottomSheet -> btmImgBtnClose.setImageResource(R.drawable.delete)
-        }
+    private fun attachCloseBehaviour() = with(binding) {
+        btmImgBtnClose.setImageResource(R.drawable.close)
         btmImgBtnClose.setOnClickListener {
-            when (taskBottomSheet) {
-                is TaskBottomSheetType.CreateBottomSheet -> {}
-                is TaskBottomSheetType.ModifyBottomSheet -> taskBottomSheet.onDeleted.invoke(
-                    taskData.value
-                )
-            }
             dismiss()
         }
     }
