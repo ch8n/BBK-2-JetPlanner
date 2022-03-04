@@ -33,7 +33,6 @@ class TaskListAdapter private constructor(
 
     fun getItemAt(position: Int) = getItem(position)
 
-
     companion object {
 
         private val diffUtil: DiffUtil.ItemCallback<Task> =

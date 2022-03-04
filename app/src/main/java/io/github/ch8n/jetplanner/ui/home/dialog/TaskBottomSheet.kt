@@ -120,7 +120,6 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
                 val taskName = s?.toString() ?: ""
                 taskData.tryEmit(taskData.value.copy(name = taskName))
             }
-
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
@@ -128,8 +127,11 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
 
     private fun autoPopulateUI() = with(binding) {
         when (val taskBottomSheet = bottomSheetType) {
-            is TaskBottomSheetType.CreateBottomSheet -> {}
+            is TaskBottomSheetType.CreateBottomSheet -> {
+                btmLabelActionType.setText(getString(R.string.create_task))
+            }
             is TaskBottomSheetType.ModifyBottomSheet -> with(taskBottomSheet.task) {
+                btmLabelActionType.setText(getString(R.string.modify_task))
                 editTaskName.editText?.setText(name)
                 textTaskFrom.setText(displayStartTime)
                 textTaskTo.setText(displayEndTime)
@@ -203,6 +205,6 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
     }
 
     companion object {
-        const val TAG = "ModalBottomSheet"
+        const val TAG = "TASK_BOTTOM_SHEET"
     }
 }

@@ -4,6 +4,7 @@
     <string name="preview">Preview</string>
     <string name="current_task">Current Task</string>
     <string name="create_task">Create Task</string>
+    <string name="modify_task">Update Task</string>
     <string name="dismiss">Dismiss</string>
     <string name="done">Done</string>
     <string name="save">Save</string>
