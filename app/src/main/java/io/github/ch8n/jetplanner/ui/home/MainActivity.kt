@@ -13,7 +13,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.github.ch8n.jetplanner.R
 import io.github.ch8n.jetplanner.data.model.Task
 import io.github.ch8n.jetplanner.data.model.TaskStatus
-import io.github.ch8n.jetplanner.databinding.ActivityPlannerHomeBinding
+import io.github.ch8n.jetplanner.databinding.ActivityMainBinding
 import io.github.ch8n.jetplanner.ui.home.adapter.TaskListAdapter
 import io.github.ch8n.jetplanner.ui.home.dialog.TaskBottomSheet
 import io.github.ch8n.jetplanner.ui.home.dialog.TaskBottomSheetType
@@ -40,14 +40,14 @@ fun View.setVisible(isVisible: Boolean) {
 @AndroidEntryPoint
 class PlannerHomeActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityPlannerHomeBinding
+    private lateinit var binding: ActivityMainBinding
     private lateinit var listAdapter: TaskListAdapter
 
     private val viewModel: PlannerHomeViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityPlannerHomeBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setup()
     }
