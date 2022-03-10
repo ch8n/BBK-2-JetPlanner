@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/yellow_light"
-    tools:context=".ui.home.PlannerHomeActivity">
+    android:background="@color/yellow_light">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:layout_width="42dp"
@@ -69,10 +68,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="45dp"
         android:layout_marginTop="36dp"
+        android:fontFamily="@font/poppins_regular"
         android:text="Friday,"
         android:textColor="@color/black"
         android:textSize="32sp"
-        android:fontFamily="@font/poppins_regular"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/blob" />
 
@@ -110,7 +109,6 @@
         android:id="@+id/container_bottom_sheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">

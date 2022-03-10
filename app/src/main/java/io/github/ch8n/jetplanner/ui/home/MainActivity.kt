@@ -25,20 +25,8 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
 
-fun String.capitalFirst(): String {
-    return this.lowercase().replaceFirstChar { it.uppercase() }
-}
-
-fun View.setVisible(isVisible: Boolean) {
-    if (isVisible) {
-        visibility = View.VISIBLE
-    } else {
-        visibility = View.GONE
-    }
-}
-
 @AndroidEntryPoint
-class PlannerHomeActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var listAdapter: TaskListAdapter
@@ -59,6 +47,18 @@ class PlannerHomeActivity : AppCompatActivity() {
         initCurrentTaskBottomSheet(taskBottomSheet)
     }
 
+    private fun String.capitalFirst(): String {
+        return this.lowercase().replaceFirstChar { it.uppercase() }
+    }
+
+    private fun View.setVisible(isVisible: Boolean) {
+        if (isVisible) {
+            visibility = View.VISIBLE
+        } else {
+            visibility = View.GONE
+        }
+    }
+
     private fun initDate() = with(binding) {
         val currentMoment = Clock.System.now()
         val dateTimeInUTC = currentMoment.toLocalDateTime(TimeZone.UTC)
@@ -71,18 +71,6 @@ class PlannerHomeActivity : AppCompatActivity() {
 
     private fun initCurrentTaskBottomSheet(taskBottomSheet: TaskBottomSheet): Unit = with(binding) {
         bottomSheetBehavior = BottomSheetBehavior.from(includedCreateTask.bottomSheet)
-        bottomSheetBehavior?.addBottomSheetCallback(object :
-            BottomSheetBehavior.BottomSheetCallback() {
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
-
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                when (newState) {
-                    BottomSheetBehavior.STATE_HIDDEN -> {
-                        bottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
-                    }
-                }
-            }
-        })
 
         includedCreateTask.btmImgBtnCreateTask.setOnClickListener {
             if (!taskBottomSheet.isVisible) {
