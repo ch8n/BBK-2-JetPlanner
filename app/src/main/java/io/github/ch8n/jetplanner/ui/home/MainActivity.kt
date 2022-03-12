@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
             includedCurrentTask.btmImgBtnCreateTask.setOnClickListener {
                 if (!taskBottomSheet.isVisible) {
                     taskBottomSheet.setBottomSheetType(
-                        TaskBottomSheetType.CreateBottomSheet(
+                        TaskBottomSheetType.CreateTask(
                             onCreated = {
                                 viewModel.addTask(it)
                             }
@@ -118,7 +118,7 @@ class MainActivity : AppCompatActivity() {
             { position: Int, item: Task ->
                 if (!taskBottomSheet.isVisible) {
                     taskBottomSheet.setBottomSheetType(
-                        TaskBottomSheetType.ModifyBottomSheet(
+                        TaskBottomSheetType.ModifyTask(
                             task = item,
                             onUpdated = {
                                 viewModel.addTask(it)

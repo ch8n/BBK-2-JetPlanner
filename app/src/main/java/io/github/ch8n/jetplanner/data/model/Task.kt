@@ -1,14 +1,13 @@
 package io.github.ch8n.jetplanner.data.model
 
 import androidx.room.Entity
-import androidx.room.Ignore
 import androidx.room.PrimaryKey
-import kotlinx.datetime.*
+import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toJavaLocalDateTime
+import kotlinx.datetime.toLocalDateTime
 import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 import java.util.*
-import kotlin.time.toDuration
 
 enum class TaskStatus {
     PENDING,
@@ -42,13 +41,13 @@ data class Task(
         get() = endTime.toTime()
 
     companion object {
-        val fake
+        val Empty
             get() = Task(
                 id = UUID.randomUUID().toString(),
-                name = "Title -",
+                name = "",
                 status = TaskStatus.PENDING,
-                startTime = System.currentTimeMillis(),
-                endTime = System.currentTimeMillis(),
+                startTime = 0,
+                endTime = 0,
             )
     }
 }

@@ -14,19 +14,17 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.github.ch8n.jetplanner.R
 import io.github.ch8n.jetplanner.data.model.Task
-import io.github.ch8n.jetplanner.data.model.TaskStatus
 import io.github.ch8n.jetplanner.data.model.toTime
 import io.github.ch8n.jetplanner.databinding.BottomSheetCreateModifyTaskBinding
-import kotlinx.coroutines.flow.MutableStateFlow
 import java.util.*
 
 
 sealed class TaskBottomSheetType {
-    data class CreateBottomSheet(
+    data class CreateTask(
         val onCreated: (task: Task) -> Unit,
     ) : TaskBottomSheetType()
 
-    data class ModifyBottomSheet(
+    data class ModifyTask(
         val task: Task,
         val onUpdated: (task: Task) -> Unit,
     ) : TaskBottomSheetType()
@@ -42,15 +40,7 @@ class TaskCreateModifyBottomSheet : BottomSheetDialogFragment() {
         bottomSheetType = taskBottomSheet
     }
 
-    private val taskData = MutableStateFlow<Task>(
-        Task(
-            id = UUID.randomUUID().toString(),
-            name = "",
-            startTime = 0L,
-            endTime = 0L,
-            status = TaskStatus.PENDING
-        )
-    )
+    private var taskData: Task = Task.Empty
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -87,7 +77,7 @@ class TaskCreateModifyBottomSheet : BottomSheetDialogFragment() {
 
     private fun attachSaveOrUpdateBehaviour() = with(binding) {
         btmBtnSave.setOnClickListener {
-            val task = taskData.value
+            val task = taskData
             val isTaskNameValid = task.name.trim().isNotBlank()
             val isStartTimeValid = task.startTime != 0L
             val isEndTimeValid = task.endTime != 0L
@@ -95,10 +85,10 @@ class TaskCreateModifyBottomSheet : BottomSheetDialogFragment() {
             if (isValidTask) {
                 editTaskName.error = null
                 when (val taskBottomSheet = bottomSheetType) {
-                    is TaskBottomSheetType.CreateBottomSheet -> taskBottomSheet.onCreated.invoke(
+                    is TaskBottomSheetType.CreateTask -> taskBottomSheet.onCreated.invoke(
                         task
                     )
-                    is TaskBottomSheetType.ModifyBottomSheet -> taskBottomSheet.onUpdated.invoke(
+                    is TaskBottomSheetType.ModifyTask -> taskBottomSheet.onUpdated.invoke(
                         task
                     )
                 }
@@ -118,8 +108,9 @@ class TaskCreateModifyBottomSheet : BottomSheetDialogFragment() {
         binding.editTaskName.editText?.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 val taskName = s?.toString() ?: ""
-                taskData.tryEmit(taskData.value.copy(name = taskName))
+                taskData = taskData.copy(name = taskName)
             }
+
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
@@ -127,10 +118,10 @@ class TaskCreateModifyBottomSheet : BottomSheetDialogFragment() {
 
     private fun autoPopulateUI() = with(binding) {
         when (val taskBottomSheet = bottomSheetType) {
-            is TaskBottomSheetType.CreateBottomSheet -> {
+            is TaskBottomSheetType.CreateTask -> {
                 btmLabelActionType.setText(getString(R.string.create_task))
             }
-            is TaskBottomSheetType.ModifyBottomSheet -> with(taskBottomSheet.task) {
+            is TaskBottomSheetType.ModifyTask -> with(taskBottomSheet.task) {
                 btmLabelActionType.setText(getString(R.string.modify_task))
                 editTaskName.editText?.setText(name)
                 textTaskFrom.setText(displayStartTime)
@@ -139,18 +130,10 @@ class TaskCreateModifyBottomSheet : BottomSheetDialogFragment() {
         }
     }
 
-    private fun initDefaultTask() = with(binding) {
-        when (val taskBottomSheet = bottomSheetType) {
-            is TaskBottomSheetType.CreateBottomSheet -> taskData.tryEmit(
-                Task(
-                    id = UUID.randomUUID().toString(),
-                    name = "",
-                    startTime = 0L,
-                    endTime = 0L,
-                    status = TaskStatus.PENDING
-                )
-            )
-            is TaskBottomSheetType.ModifyBottomSheet -> taskData.tryEmit(taskBottomSheet.task)
+    private fun initDefaultTask() {
+        taskData = when (val taskBottomSheet = bottomSheetType) {
+            is TaskBottomSheetType.CreateTask -> Task.Empty
+            is TaskBottomSheetType.ModifyTask -> taskBottomSheet.task
         }
     }
 
@@ -161,19 +144,19 @@ class TaskCreateModifyBottomSheet : BottomSheetDialogFragment() {
         val currentMinute: Int = calendar.get(Calendar.MINUTE)
 
         val onTimeSelected = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
-            when {
-                timePickerRequestCode == 1000 -> {
+            when (timePickerRequestCode) {
+                1000 -> {
                     calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
                     calendar.set(Calendar.MINUTE, minute)
                     val selectedTime = calendar.timeInMillis
-                    taskData.tryEmit(taskData.value.copy(startTime = selectedTime))
+                    taskData = taskData.copy(startTime = selectedTime)
                     binding.textTaskFrom.setText(selectedTime.toTime())
                 }
-                timePickerRequestCode == 1001 -> {
+                1001 -> {
                     calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
                     calendar.set(Calendar.MINUTE, minute)
                     val selectedTime = calendar.timeInMillis
-                    taskData.tryEmit(taskData.value.copy(endTime = selectedTime))
+                    taskData = taskData.copy(startTime = selectedTime)
                     binding.textTaskTo.setText(selectedTime.toTime())
                 }
             }
