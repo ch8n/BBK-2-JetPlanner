@@ -15,8 +15,8 @@ import io.github.ch8n.jetplanner.data.model.Task
 import io.github.ch8n.jetplanner.data.model.TaskStatus
 import io.github.ch8n.jetplanner.databinding.ActivityMainBinding
 import io.github.ch8n.jetplanner.ui.home.adapter.TaskListAdapter
-import io.github.ch8n.jetplanner.ui.home.dialog.TaskBottomSheet
 import io.github.ch8n.jetplanner.ui.home.dialog.TaskBottomSheetType
+import io.github.ch8n.jetplanner.ui.home.dialog.TaskCreateModifyBottomSheet
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setup() {
         initDate()
-        val taskBottomSheet = TaskBottomSheet()
+        val taskBottomSheet = TaskCreateModifyBottomSheet()
         initTaskList(taskBottomSheet)
         initCurrentTaskBottomSheet(taskBottomSheet)
     }
@@ -69,29 +69,30 @@ class MainActivity : AppCompatActivity() {
 
     private var bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>? = null
 
-    private fun initCurrentTaskBottomSheet(taskBottomSheet: TaskBottomSheet): Unit = with(binding) {
-        bottomSheetBehavior = BottomSheetBehavior.from(includedCreateTask.bottomSheet)
+    private fun initCurrentTaskBottomSheet(taskBottomSheet: TaskCreateModifyBottomSheet): Unit =
+        with(binding) {
+            bottomSheetBehavior = BottomSheetBehavior.from(includedCurrentTask.bottomSheet)
 
-        includedCreateTask.btmImgBtnCreateTask.setOnClickListener {
-            if (!taskBottomSheet.isVisible) {
-                taskBottomSheet.setBottomSheetType(
-                    TaskBottomSheetType.CreateBottomSheet(
-                        onCreated = {
-                            viewModel.addTask(it)
-                        }
+            includedCurrentTask.btmImgBtnCreateTask.setOnClickListener {
+                if (!taskBottomSheet.isVisible) {
+                    taskBottomSheet.setBottomSheetType(
+                        TaskBottomSheetType.CreateBottomSheet(
+                            onCreated = {
+                                viewModel.addTask(it)
+                            }
+                        )
                     )
-                )
-                taskBottomSheet.show(supportFragmentManager, TaskBottomSheet.TAG)
-            }
+                    taskBottomSheet.show(supportFragmentManager, TaskCreateModifyBottomSheet.TAG)
+                }
         }
 
         lifecycleScope.launchWhenResumed {
             viewModel.currentTask.collect {
                 val task = it
-                includedCreateTask.btmLabelTaskTitle.setText(
+                includedCurrentTask.btmLabelTaskTitle.setText(
                     task?.name ?: getString(R.string.nothing_for_now)
                 )
-                includedCreateTask.btmBtnDone.setOnClickListener {
+                includedCurrentTask.btmBtnDone.setOnClickListener {
                     if (task != null) {
                         viewModel.addTask(task.copy(status = TaskStatus.DONE))
                     }
@@ -101,7 +102,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun initTaskList(taskBottomSheet: TaskBottomSheet): Unit = with(binding) {
+    private fun initTaskList(taskBottomSheet: TaskCreateModifyBottomSheet): Unit = with(binding) {
 
         val onRecyclerItemClicked: (position: Int, item: Task) -> Unit =
             { position: Int, item: Task ->
@@ -124,7 +125,7 @@ class MainActivity : AppCompatActivity() {
                             }
                         )
                     )
-                    taskBottomSheet.show(supportFragmentManager, TaskBottomSheet.TAG)
+                    taskBottomSheet.show(supportFragmentManager, TaskCreateModifyBottomSheet.TAG)
                 }
             }
 

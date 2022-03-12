@@ -16,7 +16,7 @@ import io.github.ch8n.jetplanner.R
 import io.github.ch8n.jetplanner.data.model.Task
 import io.github.ch8n.jetplanner.data.model.TaskStatus
 import io.github.ch8n.jetplanner.data.model.toTime
-import io.github.ch8n.jetplanner.databinding.BottomSheetCreateTaskBinding
+import io.github.ch8n.jetplanner.databinding.BottomSheetCreateModifyTaskBinding
 import kotlinx.coroutines.flow.MutableStateFlow
 import java.util.*
 
@@ -33,9 +33,9 @@ sealed class TaskBottomSheetType {
 }
 
 
-class TaskBottomSheet : BottomSheetDialogFragment() {
+class TaskCreateModifyBottomSheet : BottomSheetDialogFragment() {
 
-    private lateinit var binding: BottomSheetCreateTaskBinding
+    private lateinit var binding: BottomSheetCreateModifyTaskBinding
     private lateinit var bottomSheetType: TaskBottomSheetType
 
     fun setBottomSheetType(taskBottomSheet: TaskBottomSheetType) {
@@ -56,7 +56,7 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View = BottomSheetCreateTaskBinding
+    ): View = BottomSheetCreateModifyTaskBinding
         .inflate(layoutInflater)
         .let {
             binding = it

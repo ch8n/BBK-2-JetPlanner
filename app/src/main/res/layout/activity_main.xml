@@ -114,7 +114,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <include
-            android:id="@+id/included_create_task"
+            android:id="@+id/included_current_task"
             layout="@layout/layout_current_task" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
