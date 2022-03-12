@@ -146,7 +146,7 @@ class TaskCreateModifyBottomSheet : BottomSheetDialogFragment() {
         val onTimeSelected = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
             calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
             calendar.set(Calendar.MINUTE, minute)
-            val selectedTime = calendar.timeInMillis
+            val selectedTime = calendar.time.toInstant().epochSecond
             when (timePickerRequestCode) {
                 1000 -> {
                     currentTask = currentTask.copy(startTime = selectedTime)
