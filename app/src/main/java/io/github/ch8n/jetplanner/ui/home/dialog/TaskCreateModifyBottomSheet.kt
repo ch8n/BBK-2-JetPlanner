@@ -40,7 +40,7 @@ class TaskCreateModifyBottomSheet : BottomSheetDialogFragment() {
         bottomSheetType = taskBottomSheet
     }
 
-    private var taskData: Task = Task.Empty
+    private var currentTask: Task = Task.Empty
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -77,7 +77,7 @@ class TaskCreateModifyBottomSheet : BottomSheetDialogFragment() {
 
     private fun attachSaveOrUpdateBehaviour() = with(binding) {
         btmBtnSave.setOnClickListener {
-            val task = taskData
+            val task = currentTask
             val isTaskNameValid = task.name.trim().isNotBlank()
             val isStartTimeValid = task.startTime != 0L
             val isEndTimeValid = task.endTime != 0L
@@ -108,7 +108,7 @@ class TaskCreateModifyBottomSheet : BottomSheetDialogFragment() {
         binding.editTaskName.editText?.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 val taskName = s?.toString() ?: ""
-                taskData = taskData.copy(name = taskName)
+                currentTask = currentTask.copy(name = taskName)
             }
 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -131,7 +131,7 @@ class TaskCreateModifyBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun initDefaultTask() {
-        taskData = when (val taskBottomSheet = bottomSheetType) {
+        currentTask = when (val taskBottomSheet = bottomSheetType) {
             is TaskBottomSheetType.CreateTask -> Task.Empty
             is TaskBottomSheetType.ModifyTask -> taskBottomSheet.task
         }
@@ -144,23 +144,21 @@ class TaskCreateModifyBottomSheet : BottomSheetDialogFragment() {
         val currentMinute: Int = calendar.get(Calendar.MINUTE)
 
         val onTimeSelected = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
+            calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
+            calendar.set(Calendar.MINUTE, minute)
+            val selectedTime = calendar.timeInMillis
             when (timePickerRequestCode) {
                 1000 -> {
-                    calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
-                    calendar.set(Calendar.MINUTE, minute)
-                    val selectedTime = calendar.timeInMillis
-                    taskData = taskData.copy(startTime = selectedTime)
+                    currentTask = currentTask.copy(startTime = selectedTime)
                     binding.textTaskFrom.setText(selectedTime.toTime())
                 }
                 1001 -> {
-                    calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
-                    calendar.set(Calendar.MINUTE, minute)
-                    val selectedTime = calendar.timeInMillis
-                    taskData = taskData.copy(startTime = selectedTime)
+                    currentTask = currentTask.copy(endTime = selectedTime)
                     binding.textTaskTo.setText(selectedTime.toTime())
                 }
             }
         }
+
         val timePickerDialog = TimePickerDialog(
             requireContext(),
             onTimeSelected,
