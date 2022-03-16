@@ -9,7 +9,8 @@ import io.github.ch8n.jetplanner.data.repository.TaskRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -30,13 +31,13 @@ class TaskViewModel @Inject constructor(
         }
     }
 
-    fun observeTask() = viewModelScope.launch {
-        taskRepository
-            .getTasks()
-            .collect {
-                _tasks.emit(it)
-            }
-    }
+    fun observeTask() = taskRepository
+        .getTasks()
+        .onEach {
+            _tasks.emit(it)
+        }
+        .launchIn(viewModelScope)
+
 
     fun addTask(task: Task) = viewModelScope.launch {
         taskRepository.addUpdateTask(task)
