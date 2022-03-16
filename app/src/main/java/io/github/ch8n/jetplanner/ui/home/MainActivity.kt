@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var listAdapter: TaskListAdapter
 
-    private val viewModel: PlannerHomeViewModel by viewModels()
+    private val viewModel: TaskViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -24,7 +24,6 @@ fun Long.toTime(formatting: String = "hh:mm a"): String {
     return dateTime.toJavaLocalDateTime().format(timeFormat)
 }
 
-
 @Entity
 data class Task(
     @PrimaryKey val id: String,

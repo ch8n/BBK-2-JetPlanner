@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class PlannerHomeViewModel @Inject constructor(
+class TaskViewModel @Inject constructor(
     private val taskRepository: TaskRepository
 ) : ViewModel() {
 
