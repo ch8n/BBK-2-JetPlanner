@@ -136,7 +136,7 @@ class MainActivity : AppCompatActivity() {
             .also { listAdapter = it }
             .also { listTask.adapter = it }
             .also { adapter ->
-                viewModel.tasks
+                viewModel.observeTask()
                     .onEach {
                         adapter.submitList(it) {
 
@@ -170,7 +170,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 ).attachToRecyclerView(listTask)
             }
-            .also { viewModel.observeTask() }
+
 
     }
 
