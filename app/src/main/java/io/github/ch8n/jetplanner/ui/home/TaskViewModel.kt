@@ -18,7 +18,6 @@ class TaskViewModel @Inject constructor(
     private val taskRepository: TaskRepository
 ) : ViewModel() {
 
-
     private val _currentTask = MutableStateFlow<Task?>(null)
     val currentTask = _currentTask.asStateFlow()
 

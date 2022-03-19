@@ -31,7 +31,7 @@ class TaskListAdapter private constructor(
         holder.onBind(getItem(position))
     }
 
-    fun getItemAt(position: Int) = getItem(position)
+    private fun getItemAt(position: Int) = getItem(position)
 
     companion object {
 
