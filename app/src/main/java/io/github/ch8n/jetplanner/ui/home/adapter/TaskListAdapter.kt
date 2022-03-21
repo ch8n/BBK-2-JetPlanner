@@ -80,12 +80,16 @@ class TaskItemVH(
             }
         )
 
+        // get color according to task status
+        val color = when (taskItem.status) {
+            TaskStatus.PENDING -> R.color.yellow
+            TaskStatus.DONE -> R.color.green
+            TaskStatus.FAILED -> R.color.red
+        }
+
+        // set color to card background
         rootCard.setCardBackgroundColor(
-            when (taskItem.status) {
-                TaskStatus.PENDING -> ContextCompat.getColor(context, R.color.yellow)
-                TaskStatus.DONE -> ContextCompat.getColor(context, R.color.green)
-                TaskStatus.FAILED -> ContextCompat.getColor(context, R.color.red)
-            }
+            ContextCompat.getColor(context, color)
         )
 
         rootCard.setOnClickListener {
